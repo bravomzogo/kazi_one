@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>Respond to Notification</h2>
+        </div>
+        <div class="card-body">
+            <div class="mb-4">
+                <h4>Request Details</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Request ID:</strong> {{ notification.request.id }}</p>
+                        <p><strong>Patient:</strong> {{ notification.request.patient }}</p>
+                        <p><strong>Requester:</strong> {{ notification.request.requester.get_full_name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Purpose:</strong> {{ notification.request.purpose }}</p>
+                        <p><strong>Request Date:</strong> {{ notification.request.created_at|date:"F j, Y H:i" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.response.id_for_label }}"><strong>Your Response:</strong></label>
+                    {{ form.response }}
+                    {% if form.response.errors %}
+                        <div class="alert alert-danger mt-2">
+                            {{ form.response.errors }}
+                        </div>
+                    {% endif %}
+                    <small class="form-text text-muted">Please provide your feedback or approval comments.</small>
+                </div>
+
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-success mr-2">
+                        <i class="fas fa-check"></i> Submit Response
+                    </button>
+                    <a href="{% url 'requests:hod_notifications' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Notifications
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    textarea.form-control {
+        min-height: 120px;
+    }
+</style>
+{% endblock %}

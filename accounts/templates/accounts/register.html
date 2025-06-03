@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+{% load static %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex align-items-center">
+                <img src="{% static 'img/lg.jpg' %}" alt="Logo" class="rounded-circle me-2" style="height: 40px;">
+                <h5 class="mb-0">Register to HDAACs</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Create Account</button>
+                </form>
+                <div class="mt-4 text-center">
+                    <small class="text-muted">Already have an account?</small><br>
+                    <a href="{% url 'login' %}" class="btn btn-link">Login Here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

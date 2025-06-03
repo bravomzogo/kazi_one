@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}HRIO Request List{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Pending Data Requests</h5>
+            </div>
+            <div class="card-body">
+                {% if requests %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Patient</th>
+                                <th>Requester</th>
+                                <th>Purpose</th>
+                                <th>Requested</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in requests %}
+                            <tr>
+                                <td>{{ request.id }}</td>
+                                <td>{{ request.patient }}</td>
+                                <td>{{ request.requester.get_full_name }}</td>
+                                <td>{{ request.purpose|truncatechars:50 }}</td>
+                                <td>{{ request.created_at|timesince }} ago</td>
+                                <td>
+                                    <a href="{% url 'handle_request' request.id %}" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-eye"></i> Review
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    No pending requests found.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

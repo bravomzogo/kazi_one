@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}HRIO Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'patient_list' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-people-fill"></i> Manage Patients
+                    </a>
+                    <a href="{% url 'hrio_request_list' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-clipboard2-pulse"></i> View Requests
+                    </a>
+                    <a href="{% url 'patient_search' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-search"></i> Search Records
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Pending Requests</h5>
+            </div>
+            <div class="card-body">
+                {% if pending_requests %}
+                    <div class="list-group">
+                        {% for req in pending_requests %}
+                            <a href="{% url 'handle_request' req.id %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ req.patient }}</h6>
+                                    <small>{{ req.created_at|timesince }} ago</small>
+                                </div>
+                                <p class="mb-1">{{ req.purpose|truncatechars:50 }}</p>
+                                <small>Requested by: {{ req.requester.get_full_name }}</small>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No pending requests</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card-header {
+    font-weight: 500;
+}
+
+.list-group-item {
+    transition: all 0.2s;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.table th {
+    white-space: nowrap;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+/* Status badges */
+.badge-pending {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-approved {
+    background-color: #198754;
+}
+
+.badge-denied {
+    background-color: #dc3545;
+}
+
+.badge-expired {
+    background-color: #6c757d;
+}
+
+/* Patient status badges */
+.badge-normal {
+    background-color: #0d6efd;
+}
+
+.badge-chronic {
+    background-color: #fd7e14;
+}
+
+.badge-critical {
+    background-color: #dc3545;
+}

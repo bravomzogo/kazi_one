@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Department Notifications{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Data Sharing Notifications</h5>
+            </div>
+            <div class="card-body">
+                {% if notifications %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Patient</th>
+                                <th>Data Requested</th>
+                                <th>Requester</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for notification in notifications %}
+                            <tr>
+                                <td>{{ notification.request.id }}</td>
+                                <td>{{ notification.request.patient }}</td>
+                                <td>{{ notification.request.purpose|truncatechars:40 }}</td>
+                                <td>{{ notification.request.requester.get_full_name }}</td>
+                                <td>{{ notification.request.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>
+                                    <span class="badge bg-{% if notification.request.status == 'APPROVED' %}success{% else %}warning{% endif %}">
+                                        {{ notification.request.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'respond_notification' notification.id %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    No notifications found.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

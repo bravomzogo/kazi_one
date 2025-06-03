@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ patient }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Patient Details</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Patient ID</dt>
+                    <dd class="col-sm-8">{{ patient.patient_number }}</dd>
+
+                    <dt class="col-sm-4">Name</dt>
+                    <dd class="col-sm-8">{{ patient.first_name }} {{ patient.last_name }}</dd>
+
+                    <dt class="col-sm-4">Date of Birth</dt>
+                    <dd class="col-sm-8">{{ patient.date_of_birth|date:"Y-m-d" }}</dd>
+
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge 
+                            {% if patient.status == 'NORMAL' %}bg-primary
+                            {% elif patient.status == 'CHRONIC' %}bg-warning text-dark
+                            {% else %}bg-danger
+                            {% endif %}">
+                            {{ patient.get_status_display }}
+                        </span>
+                    </dd>
+
+                    <dt class="col-sm-4">Phone</dt>
+                    <dd class="col-sm-8">{{ patient.phone_number }}</dd>
+
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">{{ patient.email|default:"-" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Medical Records</h5>
+                <a href="{% url 'record_create' patient.pk %}" class="btn btn-light btn-sm">
+                    <i class="bi bi-file-earmark-plus"></i> Add Record
+                </a>
+            </div>
+            <div class="card-body">
+                {% if records %}
+                <div class="list-group">
+                    {% for record in records %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ record.diagnosis }}</h6>
+                            <small>{{ record.created_at|date:"Y-m-d" }}</small>
+                        </div>
+                        <p class="mb-1">{{ record.department }}</p>
+                        {% if record.treatment %}
+                        <p class="mb-1"><strong>Treatment:</strong> {{ record.treatment }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    No medical records found for this patient.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

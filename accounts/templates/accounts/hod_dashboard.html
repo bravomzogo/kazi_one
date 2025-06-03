@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}HOD Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Head of Department Dashboard</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle-fill"></i> You will be notified when data from your department is shared.
+                </div>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'hod_notifications' %}" class="btn btn-primary">
+                        <i class="bi bi-bell-fill"></i> View Notifications
+                    </a>
+                    <a href="{% url 'audit_logs' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-list-check"></i> View Audit Logs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

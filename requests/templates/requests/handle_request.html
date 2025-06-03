@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Handle Request #{{ data_request.id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Review Data Request</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6>Request Details</h6>
+                    <dl class="row">
+                        <dt class="col-sm-3">Patient</dt>
+                        <dd class="col-sm-9">{{ data_request.patient }}</dd>
+                        
+                        <dt class="col-sm-3">Requester</dt>
+                        <dd class="col-sm-9">{{ data_request.requester.get_full_name }} ({{ data_request.requester.get_role_display }})</dd>
+                        
+                        <dt class="col-sm-3">Purpose</dt>
+                        <dd class="col-sm-9">{{ data_request.purpose }}</dd>
+                        
+                        <dt class="col-sm-3">Requested</dt>
+                        <dd class="col-sm-9">{{ data_request.created_at|timesince }} ago</dd>
+                        
+                        <dt class="col-sm-3">Patient Status</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge 
+                                {% if data_request.patient.status == 'NORMAL' %}bg-primary
+                                {% elif data_request.patient.status == 'CHRONIC' %}bg-warning text-dark
+                                {% else %}bg-danger
+                                {% endif %}">
+                                {{ data_request.patient.get_status_display }}
+                            </span>
+                        </dd>
+                    </dl>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if data_request.patient.status in 'CHRONIC,CRITICAL' %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <strong>Notice:</strong> This is a {{ data_request.patient.get_status_display|lower }} patient.
+                            Consent override justification is required.
+                        </div>
+                        <div class="mb-3">
+                            <label for="justification" class="form-label">Justification for Override</label>
+                            <textarea class="form-control" id="justification" name="justification" rows="3" required></textarea>
+                            <div class="form-text">Explain why consent override is necessary.</div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" name="action" value="deny" class="btn btn-danger me-md-2">
+                            <i class="bi bi-x-circle"></i> Deny Request
+                        </button>
+                        <button type="submit" name="action" value="approve" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Approve Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

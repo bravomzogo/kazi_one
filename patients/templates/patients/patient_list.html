@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient List{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Patient List</h5>
+                <a href="{% url 'patient_create' %}" class="btn btn-light btn-sm">
+                    <i class="bi bi-plus-lg"></i> Add Patient
+                </a>
+            </div>
+            <div class="card-body">
+                {% if patients %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Patient ID</th>
+                                <th>Name</th>
+                                <th>Date of Birth</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                            <tr>
+                                <td>{{ patient.patient_number }}</td>
+                                <td>{{ patient.first_name }} {{ patient.last_name }}</td>
+                                <td>{{ patient.date_of_birth|date:"Y-m-d" }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if patient.status == 'NORMAL' %}bg-primary
+                                        {% elif patient.status == 'CHRONIC' %}bg-warning text-dark
+                                        {% else %}bg-danger
+                                        {% endif %}">
+                                        {{ patient.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'patient_detail' patient.pk %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                    <a href="{% url 'record_create' patient.pk %}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-file-earmark-plus"></i> Add Record
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    No patients found. <a href="{% url 'patient_create' %}">Add your first patient</a>.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
