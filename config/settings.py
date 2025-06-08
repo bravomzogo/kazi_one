@@ -95,7 +95,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For production
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files (uploads)
+# Media files (Uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -110,10 +110,15 @@ LOGOUT_REDIRECT_URL = 'login'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Security settings for production
-if not DEBUG:
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+# if not DEBUG:
+#     SECURE_HSTS_SECONDS = 31536000  # 1 year
+#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+#     SECURE_HSTS_PRELOAD = True
+#     SECURE_SSL_REDIRECT = True
+#     SESSION_COOKIE_SECURE = True
+#     CSRF_COOKIE_SECURE = True
+# else:
+#     # Explicitly disable SSL-related settings for local development
+#     SECURE_SSL_REDIRECT = False
+#     SESSION_COOKIE_SECURE = False
+#     CSRF_COOKIE_SECURE = False

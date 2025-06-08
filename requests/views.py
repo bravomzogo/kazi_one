@@ -16,14 +16,13 @@ def request_data(request):
     if request.method == 'POST':
         form = DataRequestForm(request.POST)
         if form.is_valid():
-            # Get HRIO for the requester's facility
             hrio = CustomUser.objects.filter(
                 role='HRIO',
                 facility=request.user.facility
             ).first()
             
             if not hrio:
-                messages.error(request, "No HRIO available for your facility. Please contact administration.")
+                messages.error(request, "No HRIO available for your facility.")
                 return redirect('dashboard')
             
             try:
@@ -32,11 +31,19 @@ def request_data(request):
                 data_request.hrio = hrio
                 data_request.save()
                 
-                messages.success(request, "Your request has been submitted successfully!")
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='REQUEST',
+                    patient=data_request.patient,
+                    request=data_request,
+                    ip_address=request.META.get('REMOTE_ADDR')
+                )
+                
+                messages.success(request, "Data request submitted successfully!")
                 return redirect('dashboard')
                 
             except IntegrityError:
-                messages.error(request, "An error occurred while processing your request. Please try again.")
+                messages.error(request, "Error processing your request. Try again.")
                 return redirect('request_data')
     else:
         form = DataRequestForm()
@@ -65,7 +72,6 @@ def handle_request(request, pk):
         action = request.POST.get('action')
         
         if action == 'approve':
-            # Check if consent already exists
             consent, created = Consent.objects.get_or_create(
                 request=data_request,
                 defaults={'response': 'PENDING'}
@@ -74,23 +80,27 @@ def handle_request(request, pk):
             if data_request.patient.status in ['CHRONIC', 'CRITICAL']:
                 justification = request.POST.get('justification', '').strip()
                 if not justification:
-                    messages.error(request, "Justification is required for chronic/critical patients")
+                    messages.error(request, "Justification required for chronic/critical patients.")
                     return redirect('handle_request', pk=pk)
                 
                 consent.response = 'OVERRIDDEN'
                 consent.override_justification = justification
                 consent.save()
+                
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='OVERRIDE',
+                    patient=data_request.patient,
+                    request=data_request,
+                    ip_address=request.META.get('REMOTE_ADDR')
+                )
             else:
-                if not created:  # Only send consent request if it's new
-                    consent.response = 'PENDING'
-                    consent.save()
-                    messages.info(request, "Consent request sent to patient")
+                if created:
+                    messages.info(request, "Consent request sent to patient.")
             
-            # Get department from the patient's most recent record
             latest_record = data_request.patient.records.order_by('-created_at').first()
             department = latest_record.department if latest_record else 'Unknown'
             
-            # Notify department head if exists
             hod = CustomUser.objects.filter(
                 role='HOD',
                 department=department,
@@ -102,23 +112,41 @@ def handle_request(request, pk):
                     request=data_request,
                     hod=hod
                 )
-                messages.info(request, f"Notification sent to {hod.get_full_name()}")
+                messages.info(request, f"Notification sent to {hod.get_full_name()}.")
             
             data_request.status = 'APPROVED'
             data_request.save()
             
-            messages.success(request, "Request approved successfully")
+            AuditLog.objects.create(
+                user=request.user,
+                action='APPROVE',
+                patient=data_request.patient,
+                request=data_request,
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
+            
+            messages.success(request, "Request approved successfully!")
             return redirect('hrio_request_list')
         
         elif action == 'deny':
             data_request.status = 'DENIED'
             data_request.save()
-            messages.success(request, "Request denied")
+            
+            AuditLog.objects.create(
+                user=request.user,
+                action='DENY',
+                patient=data_request.patient,
+                request=data_request,
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
+            
+            messages.success(request, "Request denied.")
             return redirect('hrio_request_list')
     
     return render(request, 'requests/handle_request.html', {
         'data_request': data_request
     })
+
 @login_required
 @hod_required
 def hod_notifications(request):
@@ -146,10 +174,11 @@ def respond_notification(request, pk):
                 action='HOD_NOTIFY',
                 description=f"HOD responded to notification for request #{notification.request.id}",
                 patient=notification.request.patient,
-                request=notification.request
+                request=notification.request,
+                ip_address=request.META.get('REMOTE_ADDR')
             )
             
-            messages.success(request, "Your response has been recorded")
+            messages.success(request, "Response recorded successfully!")
             return redirect('hod_notifications')
     else:
         form = DepartmentNotificationForm(instance=notification)
@@ -157,4 +186,31 @@ def respond_notification(request, pk):
     return render(request, 'requests/respond_notification.html', {
         'form': form,
         'notification': notification
+    })
+
+@login_required
+@requester_required
+def view_approved_data(request, pk):
+    data_request = get_object_or_404(DataRequest, pk=pk, requester=request.user, status='APPROVED')
+    consent = Consent.objects.get(request=data_request)
+    
+    if consent.response not in ['GRANTED', 'OVERRIDDEN']:
+        messages.error(request, "Consent not granted for this request.")
+        return redirect('dashboard')
+    
+    patient = data_request.patient
+    records = patient.records.all().order_by('-created_at')
+    
+    AuditLog.objects.create(
+        user=request.user,
+        action='VIEW',
+        patient=patient,
+        request=data_request,
+        ip_address=request.META.get('REMOTE_ADDR')
+    )
+    
+    return render(request, 'requests/view_data.html', {
+        'patient': patient,
+        'records': records,
+        'data_request': data_request
     })

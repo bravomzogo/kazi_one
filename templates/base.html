@@ -90,11 +90,11 @@
                                 </a>
                             </li>
                         {% endif %}
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a class="nav-link" href="{% url 'audit_logs' %}">
                                 <i class="bi bi-list-check me-1"></i> Audit Logs
                             </a>
-                        </li>
+                        </li> -->
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav">
@@ -104,7 +104,7 @@
                                 <i class="bi bi-person-circle me-2"></i> 
                                 <div>
                                     <div class="fw-bold">{{ user.get_full_name }}</div>
-                                    <small class="text-white-50">{{ user.get_role_display }}</small>
+                                    <small class="text-white-50" style="color: white !important;">{{ user.get_role_display }}</small>
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -119,12 +119,12 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">
+                            <a class="nav-link" href="{% url 'login' %}" style="color: white !important;">
                                 <i class="bi bi-box-arrow-in-right me-1"></i> Login
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">
+                            <a class="nav-link" href="{% url 'register' %}" style="color: white !important;" >
                                 <i class="bi bi-person-plus me-1"></i> Register
                             </a>
                         </li>
