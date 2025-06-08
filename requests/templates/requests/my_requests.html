@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}My Data Requests{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">My Data Requests</h5>
+            </div>
+            <div class="card-body">
+                {% if messages %}
+                    <div class="alert alert-info">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if requests %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient</th>
+                                <th>Status</th>
+                                <th>Created At</th>
+                                <th>Expires At</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in requests %}
+                                <tr>
+                                    <td>{{ request.id }}</td>
+                                    <td>{{ request.patient }}</td>
+                                    <td>{{ request.status }}</td>
+                                    <td>{{ request.created_at|date:"Y-m-d H:i" }}</td>
+                                    <td>{{ request.expires_at|date:"Y-m-d H:i" }}</td>
+                                    <td>
+                                        {% if request.status == 'APPROVED' %}
+                                            <a href="{% url 'view_approved_data' request.id %}" class="btn btn-sm btn-success">View Data</a>
+                                        {% else %}
+                                            <span class="text-muted">No action available</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>No data requests found.</p>
+                {% endif %}
+                <a href="{% url 'dashboard' %}" class="btn btn-primary mt-3">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

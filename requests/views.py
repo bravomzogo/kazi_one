@@ -190,13 +190,35 @@ def respond_notification(request, pk):
 
 @login_required
 @requester_required
+def my_requests(request):
+    requests = DataRequest.objects.filter(
+        requester=request.user
+    ).select_related('patient').order_by('-created_at')
+    
+    return render(request, 'requests/my_requests.html', {
+        'requests': requests
+    })
+
+@login_required
+@requester_required
 def view_approved_data(request, pk):
     data_request = get_object_or_404(DataRequest, pk=pk, requester=request.user, status='APPROVED')
-    consent = Consent.objects.get(request=data_request)
-    
-    if consent.response not in ['GRANTED', 'OVERRIDDEN']:
-        messages.error(request, "Consent not granted for this request.")
-        return redirect('dashboard')
+    try:
+        consent = Consent.objects.get(request=data_request)
+        if consent.response not in ['GRANTED', 'OVERRIDDEN']:
+            messages.error(request, "Consent not granted for this request.")
+            AuditLog.objects.create(
+                user=request.user,
+                action='VIEW_ATTEMPT',
+                patient=data_request.patient,
+                request=data_request,
+                description="Unauthorized access attempt due to lack of consent",
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
+            return redirect('my_requests')
+    except Consent.DoesNotExist:
+        messages.error(request, "No consent record found for this request.")
+        return redirect('my_requests')
     
     patient = data_request.patient
     records = patient.records.all().order_by('-created_at')
