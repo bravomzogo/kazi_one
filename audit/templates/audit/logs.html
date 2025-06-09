@@ -24,8 +24,8 @@
                                     <th class="w-15">Timestamp</th>
                                     <th class="w-15">User</th>
                                     <th class="w-15">Action</th>
-                                    <th class="w-35">Description</th>
-                                    <th class="w-20">Patient</th>
+                                    <th class="w-25">Email</th>
+                                    <th class="w-15">Patient</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -43,7 +43,8 @@
                                                 </div>
                                                 <div>
                                                     <span class="d-block">{{ log.user.get_full_name }}</span>
-                                                    <small class="text-muted">{{ log.user.get_role_display }}</small>
+                                                    <small>Username:</small> <small class="text-muted">{{ log.user.username }}</small><br>
+                                                    <small>Role:</small> <small class="text-muted">{{ log.user.get_role_display }}</small>
                                                 </div>
                                             </div>
                                         {% else %}
@@ -61,8 +62,12 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="text-truncate" style="max-width: 300px;">
-                                            {{ log.description }}
+                                        <div class="text-truncate" style="max-width: 250px;">
+                                            {% if log.user %}
+                                                {{ log.user.email }}
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
                                         </div>
                                         {% if log.request %}
                                             <small class="text-muted">Request #{{ log.request.id }}</small>
@@ -99,12 +104,12 @@
                             {% if logs.has_previous %}
                             <li class="page-item">
                                 <a class="page-link" href="?page=1" aria-label="First">
-                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                    <span aria-hidden="true">««</span>
                                 </a>
                             </li>
                             <li class="page-item">
                                 <a class="page-link" href="?page={{ logs.previous_page_number }}" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
+                                    <span aria-hidden="true">«</span>
                                 </a>
                             </li>
                             {% endif %}
@@ -120,12 +125,12 @@
                             {% if logs.has_next %}
                             <li class="page-item">
                                 <a class="page-link" href="?page={{ logs.next_page_number }}" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
+                                    <span aria-hidden="true">»</span>
                                 </a>
                             </li>
                             <li class="page-item">
                                 <a class="page-link" href="?page={{ logs.paginator.num_pages }}" aria-label="Last">
-                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                    <span aria-hidden="true">»»</span>
                                 </a>
                             </li>
                             {% endif %}
