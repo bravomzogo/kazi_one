@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Add Researcher{% endblock %}
+
+{% block content %}
+<!-- Include Tailwind CSS and Font Awesome for icons -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+<style>
+    /* Custom styles for enhanced professionalism */
+    .form-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .form-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    .form-control:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .btn-primary {
+        background-color: #2563eb;
+        border-color: #2563eb;
+        transition: background-color 0.3s ease;
+    }
+    .btn-primary:hover {
+        background-color: #1e40af;
+        border-color: #1e40af;
+    }
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #218838;
+    }
+    .errorlist {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    .form-group {
+        position: relative;
+    }
+    .form-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+    }
+    .form-control-with-icon {
+        padding-left: 2.5rem;
+    }
+    .loading-spinner {
+        display: none;
+        margin-left: 10px;
+    }
+</style>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card form-card border-0 shadow-lg rounded-lg">
+                <div class="card-header bg-blue-600 text-white py-4 px-6 rounded-t-lg">
+                    <h4 class="mb-0 font-semibold text-lg">Add New Researcher</h4>
+                </div>
+                <div class="card-body p-6 bg-gray-50">
+                    <!-- Messages -->
+                    {% if messages %}
+                        <div class="alert alert-info mb-4 rounded-md border border-blue-200 bg-blue-50 text-blue-800">
+                            {% for message in messages %}
+                                <p class="mb-0">{{ message }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Form -->
+                    <form id="researcherForm" method="post" enctype="multipart/form-data" class="space-y-6">
+                        {% csrf_token %}
+
+                        <!-- Personal Information -->
+                        <fieldset class="border border-gray-200 p-4 rounded-md">
+                            <legend class="text-sm font-medium text-gray-700 px-2">Personal Information</legend>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.username.label }}</label>
+                                    <div class="relative">
+                                        <i class="form-icon fa fa-user"></i>
+                                        {{ form.username|add_class:"form-control form-control-with-icon rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    </div>
+                                    {{ form.username.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.email.label }}</label>
+                                    <div class="relative">
+                                        <i class="form-icon fa fa-envelope"></i>
+                                        {{ form.email|add_class:"form-control form-control-with-icon rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    </div>
+                                    {{ form.email.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.first_name.label }}</label>
+                                    <div class="relative">
+                                        <i class="form-icon fa fa-user"></i>
+                                        {{ form.first_name|add_class:"form-control form-control-with-icon rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    </div>
+                                    {{ form.first_name.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.last_name.label }}</label>
+                                    <div class="relative">
+                                        <i class="form-icon fa fa-user"></i>
+                                        {{ form.last_name|add_class:"form-control form-control-with-icon rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    </div>
+                                    {{ form.last_name.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.phone_number.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.phone_number.label }}</label>
+                                    <div class="relative">
+                                        <i class="form-icon fa fa-phone"></i>
+                                        {{ form.phone_number|add_class:"form-control form-control-with-icon rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    </div>
+                                    {{ form.phone_number.errors }}
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Organization Details -->
+                        <fieldset class="border border-gray-200 p-4 rounded-md">
+                            <legend class="text-sm font-medium text-gray-700 px-2">Organization Details</legend>
+                            <div class="grid grid-cols-1 gap-4">
+                                <div class="form-group">
+                                    <label for="{{ form.company.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.company.label }}</label>
+                                    <div class="relative">
+                                        <i class="form-icon fa fa-building"></i>
+                                        {{ form.company|add_class:"form-control form-control-with-icon rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    </div>
+                                    {{ form.company.errors }}
+                                </div>
+                                <!-- <div class="form-group">
+                                    <label for="{{ form.facility.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.facility.label }}</label>
+                                    {{ form.facility|add_class:"form-control rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    {{ form.facility.errors }}
+                                </div> -->
+                                <!-- <div class="form-group">
+                                    <label for="{{ form.department.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.department.label }}</label>
+                                    {{ form.department|add_class:"form-control rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    {{ form.department.errors }}
+                                </div> -->
+                                <div class="form-group">
+                                    <label for="{{ form.data_sought.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.data_sought.label }}</label>
+                                    {{ form.data_sought|add_class:"form-control rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    {{ form.data_sought.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.hr_document.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.hr_document.label }}</label>
+                                    <div class="relative">
+                                        <i class="form-icon fa fa-file-pdf"></i>
+                                        {{ form.hr_document|add_class:"form-control form-control-with-icon rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    </div>
+                                    {{ form.hr_document.errors }}
+                                    <p class="text-sm text-gray-500 mt-1">{{ form.hr_document.help_text }}</p>
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Password Fields -->
+                        <fieldset class="border border-gray-200 p-4 rounded-md">
+                            <legend class="text-sm font-medium text-gray-700 px-2">Account Credentials</legend>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.password1.label }}</label>
+                                    <div class="relative">
+                                        <i class="form-icon fa fa-lock"></i>
+                                        {{ form.password1|add_class:"form-control form-control-with-icon rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    </div>
+                                    {{ form.password1.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ form.password2.label }}</label>
+                                    <div class="relative">
+                                        <i class="form-icon fa fa-lock"></i>
+                                        {{ form.password2|add_class:"form-control form-control-with-icon rounded-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" }}
+                                    </div>
+                                    {{ form.password2.errors }}
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <!-- Form Actions -->
+                        <div class="flex justify-end space-x-3 mt-6">
+                            <a href="{% url 'dashboard' %}" class="btn btn-secondary px-4 py-2 rounded-md hover:bg-gray-300">Cancel</a>
+                            <button type="submit" class="btn btn-success px-4 py-2 rounded-md flex items-center">
+                                <span>Add Researcher</span>
+                                <span class="loading-spinner">
+                                    <svg class="animate-spin h-5 w-5 ml-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show loading spinner on form submission
+    document.getElementById('researcherForm').addEventListener('submit', function() {
+        const submitButton = this.querySelector('button[type="submit"]');
+        const spinner = submitButton.querySelector('.loading-spinner');
+        submitButton.disabled = true;
+        spinner.style.display = 'inline-block';
+    });
+</script>
+{% endblock %}

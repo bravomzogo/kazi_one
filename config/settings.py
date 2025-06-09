@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-your-secret-key-here')
 
 # Debug settings
-DEBUG = os.getenv('DEBUG', 'False') == 'True'  # False in production
+DEBUG = os.getenv('DEBUG', 'True') == 'True'  # False in production
 
 ALLOWED_HOSTS = ['*']  # For initial deployment, replace with your Render URL later
 
@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'patients',
     'requests',
     'audit',
+    'widget_tweaks',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

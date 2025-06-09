@@ -3,6 +3,13 @@
 {% block title %}HRIO Dashboard{% endblock %}
 
 {% block content %}
+<style>
+    .add-researcher-btn:hover {
+        background-color: #28a745 !important; /* Green background */
+        border-color: #28a745 !important; /* Green border */
+        color: #fff !important; /* White text */
+    }
+</style>
 <div class="row">
     <div class="col-md-6">
         <div class="card mb-4">
@@ -20,6 +27,14 @@
                     <a href="{% url 'patient_search' %}" class="btn btn-outline-primary">
                         <i class="bi bi-search"></i> Search Records
                     </a>
+                   {% if user.role == 'HRIO' %}
+                        <a href="{% url 'add_researcher' %}" class="btn btn-outline-primary ">
+                            <i class="bi bi-person-plus me-1"></i> Add Researcher
+                        </a>
+                        <a href="{% url 'researcher_info' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-person-plus me-1"></i>Researcher Info
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
