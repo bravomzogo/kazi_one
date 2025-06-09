@@ -21,7 +21,7 @@ class CustomUser(AbstractUser):
     ]
     
     facility = models.CharField(max_length=50, choices=FACILITY_CHOICES, blank=True, null=True) 
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, null=True, blank=True)
     department = models.CharField(max_length=100, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     
