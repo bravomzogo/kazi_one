@@ -17,7 +17,7 @@ class CustomUser(AbstractUser):
         ('HOD', 'Head of Department'),
         ('ADMIN', 'System Administrator'),
         ('AUDITOR', 'Auditor'),
-        ('RESEARCHER', 'Researcher'),
+        # ('RESEARCHER', 'Researcher'),
     ]
     
     facility = models.CharField(max_length=50, choices=FACILITY_CHOICES, blank=True, null=True) 
