@@ -17,11 +17,11 @@ class CustomUser(AbstractUser):
         ('HOD', 'Head of Department'),
         ('ADMIN', 'System Administrator'),
         ('AUDITOR', 'Auditor'),
-        # ('RESEARCHER', 'Researcher'),
+        ('RESEARCHER', 'Researcher'),
     ]
     
     facility = models.CharField(max_length=50, choices=FACILITY_CHOICES, blank=True, null=True) 
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, null=True, blank=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     department = models.CharField(max_length=100, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     

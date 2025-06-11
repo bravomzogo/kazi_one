@@ -48,29 +48,36 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-building text-primary mr-2"></i>
-                                    <span>{{ researcher.researcher_profile.company }}</span>
+                                    <span>{% if researcher.researcher_profile %}{{ researcher.researcher_profile.company|default:"Unknown" }}{% else %}No Profile{% endif %}</span>
                                 </div>
                             </td>
                             <td>
                                 <div class="research-details">
-                                    {{ researcher.researcher_profile.data_sought|truncatechars:100 }}
-                                    {% if researcher.researcher_profile.data_sought|length > 100 %}
-                                    <a href="#" class="text-primary small ml-2" data-toggle="collapse" 
-                                       data-target="#details-{{ researcher.id }}">Show more</a>
-                                    <div id="details-{{ researcher.id }}" class="collapse">
-                                        {{ researcher.researcher_profile.data_sought }}
-                                    </div>
+                                    {% if researcher.researcher_profile %}
+                                        {{ researcher.researcher_profile.data_sought|truncatechars:100 }}
+                                        {% if researcher.researcher_profile.data_sought|length > 100 %}
+                                        <a href="#" class="text-primary small ml-2" data-toggle="collapse" 
+                                           data-target="#details-{{ researcher.id }}">Show more</a>
+                                        <div id="details-{{ researcher.id }}" class="collapse">
+                                            {{ researcher.researcher_profile.data_sought }}
+                                        </div>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">No data specified</span>
                                     {% endif %}
                                 </div>
                             </td>
                             <td class="text-center">
+                                {% if researcher.researcher_profile and researcher.researcher_profile.hr_document %}
                                 <a href="{% url 'download_hr_document' researcher.id %}" 
                                    class="btn btn-sm btn-outline-primary"
-                                   data-toggle="tooltip"
                                    title="Download HR Document"
                                    download>
-                                    <i class="fas fa-file-download">Download</i>
+                                    <i class="bi bi-download"> Download</i>
                                 </a>
+                                {% else %}
+                                    <span class="text-muted">No document</span>
+                                {% endif %}
                             </td>
                         </tr>
                         {% empty %}
